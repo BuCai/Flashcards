@@ -23,11 +23,10 @@ public class BDGameControl : MonoBehaviour
 
     public string _imagePath;
     Sprite[] loadedSprites;
-
+    public Transform parent;
 
     private void Awake()
     {
-        
         _imagePath = LevelNumber.bookName + LevelNumber.numberOfLevel;
         if (_imagePath == "0")
             _imagePath = "KBA/u11";
@@ -42,17 +41,22 @@ public class BDGameControl : MonoBehaviour
 
         for (int i = 0; i < textures.Length; i++)
         {
-           //vocabPics[i].GetComponent<Image>().sprite == loadedSprites[i];
+           vocabPics[i].GetComponent<Image>().sprite = loadedSprites[i];
         }
+        ShufflePictures();
     }
     private void Start()
     {
         PickNumber();
+        for (int i = 0; i < bombs.Length; i++)
+        {
+            vocabPics[i].transform.SetParent(parent);
+        }
     }
 
     public void PickNumber()
     {
-            numberChosen = Random.Range(0, bombs.Length);
+        numberChosen = Random.Range(0, bombs.Length);
     }
 
     public void CheckAnswer(int useIndex)
@@ -82,5 +86,16 @@ public class BDGameControl : MonoBehaviour
         screenPos = Input.mousePosition;
         worldPos = cam.ScreenToWorldPoint(screenPos);
         clone = Instantiate(happyParticle, worldPos, Quaternion.identity);
+    }
+
+    void ShufflePictures() //shuffle the pictures location
+    {
+        for (int i = 0; i < bombs.Length; i++)
+        {
+            Vector3 temp = bombs[i].transform.position;
+            int randomIndex = Random.Range(0, bombs.Length);
+            bombs[i].transform.position = bombs[randomIndex].transform.position;
+            bombs[randomIndex].transform.position = temp;
+        }
     }
 }
